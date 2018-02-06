@@ -145,26 +145,27 @@ L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 lgd_graph_uri = "http://linkedgeodata.org/sparql?default-graph-uri=http%3A%2F%2Flinkedgeodata.org&query="
 lgd_default_query = 
 `PREFIX lgd: <http://linkedgeodata.org/ontology/>
- PREFIX geom: <http://geovocab.org/geometry#>
- PREFIX ogc: <http://www.opengis.net/ont/geosparql#>
- PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX geom: <http://geovocab.org/geometry#>
+PREFIX ogc: <http://www.opengis.net/ont/geosparql#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
- SELECT ?name, ?geo {
+SELECT ?name, ?geo 
+{
     ?bonn owl:sameAs <http://dbpedia.org/resource/Bonn> .
     ?bonn geom:geometry [ ogc:asWKT ?bonnGeo] .
+
     ?bar a lgd:Bar .
     ?bar rdfs:label ?name .    
     ?bar geom:geometry [ ogc:asWKT ?geo] .
 
     FILTER(bif:st_intersects (?bonnGeo, ?geo, 5)) .
 
- } LIMIT 10`
+} LIMIT 10`
 lgd_result_format = "&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on"
 
 // DBPedia global variables ----------------------
 dbpedia_graph_uri = "http://dbpedia.org/sparql?default-graph-uri=http://dbpedia.org&query="
-dbpedia_default_query = `PREFIX lgd:  <http://linkedgeodata.org/ontology/>
-PREFIX geom: <http://geovocab.org/geometry#>
+dbpedia_default_query = `PREFIX geom: <http://geovocab.org/geometry#>
 PREFIX ogc:  <http://www.opengis.net/ont/geosparql#>
 PREFIX owl:  <http://www.w3.org/2002/07/owl#>
 PREFIX dbo:  <http://dbpedia.org/ontology/>
@@ -176,7 +177,7 @@ SELECT *
     ?location rdfs:label ?name .
     OPTIONAL {?location geo:geometry ?geo . }
 
- } LIMIT 10`
+} LIMIT 10`
 dbpedia_result_format = "&format=application%2Fsparql-results%2Bjson&CXML_redir_for_subjs=121&CXML_redir_for_hrefs=&timeout=30000&debug=on&run=+Run+Query+"
 
 
@@ -190,6 +191,36 @@ function init() {
 
     dbpedia_query = document.getElementById("dbpedia_query")
     dbpedia_query.innerHTML = dbpedia_default_query
+
+
+    var sparql_text_area = document.getElementById("dbpedia_query");
+
+
+      require([
+    "lib/codemirror", "mode/sparql/sparql", "mode/turtle/turtle"
+  ], function(CodeMirror) {
+    CodeMirror.fromTextArea(dbpedia_query, {
+      lineNumbers: true,
+    mode:        "turtle",
+    autofocus:   false,
+    lineNumbers: true,
+    gutters:     ["CodeMirror-linenumbers", "breakpoints"],
+    extraKeys: { "Ctrl-Space": "autocomplete" }
+    });
+  });
+
+            require([
+    "lib/codemirror", "mode/sparql/sparql", "mode/turtle/turtle"
+  ], function(CodeMirror) {
+    CodeMirror.fromTextArea(lgd_query, {
+      lineNumbers: true,
+    mode:        "turtle",
+    autofocus:   false,
+    lineNumbers: true,
+    gutters:     ["CodeMirror-linenumbers", "breakpoints"],
+    extraKeys: { "Ctrl-Space": "autocomplete" }
+    });
+  });
 
 }
 
