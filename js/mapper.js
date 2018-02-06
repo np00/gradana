@@ -1,9 +1,11 @@
 
+
+
 // Linked Geo Data Query Execution 
 function executeLgdQuery() 
 {
   // read query from HTML Text area
-  lgd_query = document.getElementById("lgd_query").value
+  lgd_query = lgd_editor.getValue()
 
   // construct http get request 
   full_query = lgd_graph_uri + encodeURIComponent(lgd_query) + lgd_result_format 
@@ -17,7 +19,7 @@ function executeLgdQuery()
 function executeDbPediaQuery() 
 {
   // read query from HTML Text area
-  dbpedia_query = document.getElementById("dbpedia_query").value
+  dbpedia_query = dbpedia_editor.getValue()
 
   // construct http get request 
   full_query = dbpedia_graph_uri + encodeURIComponent(dbpedia_query) + dbpedia_result_format 
@@ -29,7 +31,7 @@ function executeDbPediaQuery()
 
 function processData(results)
 {
-   console.log(results)
+   // console.log(results)
 
    // parse eto JSON 
     var jsonResult = JSON.parse(results, null, 2);
@@ -129,7 +131,7 @@ function onMapClick(e) {
   .openOn(map);
 }
 
-var map = L.map('map').setView([50.7318, 7.1009], 15);
+map = L.map('map').setView([50.7318, 7.1009], 15);
 var markers = L.featureGroup();
 map.addLayer(markers)
 
@@ -180,7 +182,9 @@ SELECT *
 } LIMIT 10`
 dbpedia_result_format = "&format=application%2Fsparql-results%2Bjson&CXML_redir_for_subjs=121&CXML_redir_for_hrefs=&timeout=30000&debug=on&run=+Run+Query+"
 
-
+var lgd_editor
+var dbpedia_editor 
+var map
 
 map.on('click', onMapClick);
 
@@ -193,34 +197,32 @@ function init() {
     dbpedia_query.innerHTML = dbpedia_default_query
 
 
-    var sparql_text_area = document.getElementById("dbpedia_query");
-
-
-      require([
-    "lib/codemirror", "mode/sparql/sparql", "mode/turtle/turtle"
-  ], function(CodeMirror) {
-    CodeMirror.fromTextArea(dbpedia_query, {
+   require([
+      "lib/codemirror", "mode/sparql/sparql", "mode/turtle/turtle"
+    ], function(CodeMirror) {
+      dbpedia_editor = CodeMirror.fromTextArea(dbpedia_query, {
+        lineNumbers: true,
+      mode:        "turtle",
+      autofocus:   false,
       lineNumbers: true,
-    mode:        "turtle",
-    autofocus:   false,
-    lineNumbers: true,
-    gutters:     ["CodeMirror-linenumbers", "breakpoints"],
-    extraKeys: { "Ctrl-Space": "autocomplete" }
+      gutters:     ["CodeMirror-linenumbers", "breakpoints"],
+      extraKeys: { "Ctrl-Space": "autocomplete" }
+      });
     });
-  });
 
-            require([
-    "lib/codemirror", "mode/sparql/sparql", "mode/turtle/turtle"
-  ], function(CodeMirror) {
-    CodeMirror.fromTextArea(lgd_query, {
+              require([
+      "lib/codemirror", "mode/sparql/sparql", "mode/turtle/turtle"
+    ], function(CodeMirror) {
+      lgd_editor = CodeMirror.fromTextArea(lgd_query, {
+        lineNumbers: true,
+      mode:        "turtle",
+      autofocus:   false,
       lineNumbers: true,
-    mode:        "turtle",
-    autofocus:   false,
-    lineNumbers: true,
-    gutters:     ["CodeMirror-linenumbers", "breakpoints"],
-    extraKeys: { "Ctrl-Space": "autocomplete" }
+      gutters:     ["CodeMirror-linenumbers", "breakpoints"],
+      extraKeys: { "Ctrl-Space": "autocomplete" }
+      });
     });
-  });
+
 
 }
 
@@ -228,3 +230,4 @@ function clearMap() {
     markers.clearLayers();
 }
 
+     
