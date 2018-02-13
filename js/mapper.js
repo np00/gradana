@@ -67,7 +67,7 @@ function drawToMap(instanceName, instanceGeo) {
   long = long.slice(0, long.length-1)
 
 
-  new_marker = L.marker([long, lat], {icon:markerIcon}).addTo(map)
+  new_marker = L.marker([long, lat], {icon:markerIconRed}).addTo(map)
     .bindPopup(instanceName)
     .openPopup();
 
